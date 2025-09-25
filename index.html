@@ -4,117 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="assets/css/style.css" />
-    <script src="assets/js/script.js" defer></script>
+    <script type="module" src="assets/js/script.js" defer></script>
     <title>Card Carousel avec Pagination</title>
   </head>
   <body>
     <main class="carousel-container">
       <section class="carousel-wrapper">
-        <div class="carousel-track">
-          <!-- Clone de la dernière carte (sera inséré via JS ou tu peux le pré-mettre) -->
-          <article class="card clone">
-            <figure class="card-image">
-              <img src="assets/images/animation.jpg" alt="animation image" />
-              <figcaption class="card-tag">Animation</figcaption>
-            </figure>
-            <div class="card-content">
-              <h3 class="card-title">Micro Animation Designs</h3>
-              <p class="card-text">
-                Petites animations qui font la différence dans l’expérience
-                utilisateur.
-              </p>
-              <footer class="card-footer">
-                <address class="card-profile">
-                  <img src="assets/images/user-5.jpg" alt="image user" />
-                  <div class="card-profile-info">
-                    <span class="card-profile-name">David Park</span>
-                    <span class="card-profile-role">Motion Designer</span>
-                  </div>
-                </address>
-                <a href="#" class="card-button">Read More</a>
-              </footer>
-            </div>
-          </article>
-
-          <!-- Cartes réelles -->
-          <article class="card">
-            <figure class="card-image">
-              <img
-                src="assets/images/development.jpg"
-                alt="development image"
-              />
-              <figcaption class="card-tag">Development</figcaption>
-            </figure>
-            <div class="card-content">
-              <h3 class="card-title">Best Frontend Frameworks</h3>
-              <p class="card-text">
-                Comparaison des frameworks les plus populaires.
-              </p>
-              <footer class="card-footer">
-                <address class="card-profile">
-                  <img src="assets/images/user-2.jpg" alt="image user" />
-                  <div class="card-profile-info">
-                    <span class="card-profile-name">Jessica Chen</span>
-                    <span class="card-profile-role">Developer</span>
-                  </div>
-                </address>
-                <a href="#" class="card-button">Read More</a>
-              </footer>
-            </div>
-          </article>
-
-          <!-- répéter les autres cartes ici... -->
-
-          <article class="card">
-            <figure class="card-image">
-              <img src="assets/images/design.jpg" alt="design image" />
-              <figcaption class="card-tag">Design</figcaption>
-            </figure>
-            <div class="card-content">
-              <h3 class="card-title">Modern UI Trends for 2025</h3>
-              <p class="card-text">Explorer les dernières tendances UI.</p>
-              <footer class="card-footer">
-                <address class="card-profile">
-                  <img src="assets/images/user-1.jpg" alt="image user" />
-                  <div class="card-profile-info">
-                    <span class="card-profile-name">Alex Smith</span>
-                    <span class="card-profile-role">UI Designer</span>
-                  </div>
-                </address>
-                <a href="#" class="card-button">Read More</a>
-              </footer>
-            </div>
-          </article>
-
-          <!-- etc. -->
-
-          <!-- Clone de la première carte (sera inséré ou pré-insert) -->
-          <article class="card clone">
-            <figure class="card-image">
-              <img
-                src="assets/images/development.jpg"
-                alt="development image"
-              />
-              <figcaption class="card-tag">Development</figcaption>
-            </figure>
-            <div class="card-content">
-              <h3 class="card-title">Best Frontend Frameworks</h3>
-              <p class="card-text">
-                Comparaison des frameworks les plus populaires.
-              </p>
-              <footer class="card-footer">
-                <address class="card-profile">
-                  <img src="assets/images/user-2.jpg" alt="image user" />
-                  <div class="card-profile-info">
-                    <span class="card-profile-name">Jessica Chen</span>
-                    <span class="card-profile-role">Developer</span>
-                  </div>
-                </address>
-                <a href="#" class="card-button">Read More</a>
-              </footer>
-            </div>
-          </article>
-        </div>
+        <!-- Le JS insérera les cartes ici -->
+        <div class="carousel-track"></div>
       </section>
 
       <button class="carousel-btn prev">&larr;</button>

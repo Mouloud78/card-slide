@@ -21,6 +21,8 @@ body {
 }
 
 .carousel-wrapper {
+  width: 380px;
+  padding: 10px;
   overflow: hidden;
 }
 

@@ -1,125 +1,182 @@
+import cardsData from "../data/data.js";
+
 class Carousel {
-  constructor(containerSelector, options = {}) {
+  constructor(containerSelector, cardsData, config = {}) {
     this.container = document.querySelector(containerSelector);
     this.track = this.container.querySelector(".carousel-track");
-    this.cards = this.track.querySelectorAll(".card:not(.clone)");
+    this.paginationContainer = this.container.querySelector(
+      ".carousel-pagination"
+    );
     this.prevBtn = this.container.querySelector(".carousel-btn.prev");
     this.nextBtn = this.container.querySelector(".carousel-btn.next");
-    this.pagination = this.container.querySelector(".carousel-pagination");
 
-    this.cardWidth = this.cards[0].offsetWidth + 20; // include margin
-    this.totalSlides = this.cards.length;
-    this.currentIndex = 0;
-    this.autoPlayInterval = options.autoplay || 5000;
+    this.cardsData = cardsData;
+    this.slidesPerView = config.slidesPerView || 1;
+    this.autoPlayDelay = config.autoPlayDelay || 5000;
+    this.autoPlay = config.autoPlay ?? true;
+
+    this.currentIndex = 1; // commence à 1 à cause du clone au début (dernier clone)
+    this.timer = null;
 
     this.init();
   }
 
-  init() {
-    this.cloneSlides();
-    this.createPagination();
-    this.goToSlide(this.currentIndex);
-    this.attachEvents();
-    this.startAutoplay();
+  createCard(card) {
+    const article = document.createElement("article");
+    article.classList.add("card");
+    article.innerHTML = `
+      <figure class="card-image">
+        <img src="${card.image}" alt="${card.tag} image" />
+        <figcaption class="card-tag">${card.tag}</figcaption>
+      </figure>
+      <div class="card-content">
+        <h3 class="card-title">${card.title}</h3>
+        <p class="card-text">${card.text}</p>
+        <footer class="card-footer">
+          <address class="card-profile">
+            <img src="${card.profileImage}" alt="image user" />
+            <div class="card-profile-info">
+              <span class="card-profile-name">${card.profileName}</span>
+              <span class="card-profile-role">${card.profileRole}</span>
+            </div>
+          </address>
+          <a href="#" class="card-button">Read More</a>
+        </footer>
+      </div>
+    `;
+    return article;
   }
 
-  cloneSlides() {
-    const first = this.cards[0].cloneNode(true);
-    const last = this.cards[this.cards.length - 1].cloneNode(true);
-    first.classList.add("clone");
-    last.classList.add("clone");
+  populateCards() {
+    this.track.innerHTML = "";
 
-    this.track.appendChild(first);
-    this.track.prepend(last);
-
-    this.cards = this.track.querySelectorAll(".card");
-  }
-
-  attachEvents() {
-    this.nextBtn.addEventListener("click", () => this.nextSlide());
-    this.prevBtn.addEventListener("click", () => this.prevSlide());
-
-    this.paginationButtons.forEach((btn, index) =>
-      btn.addEventListener("click", () => this.goToSlide(index))
+    // Clone dernière carte et insérer au début
+    const lastCardClone = this.createCard(
+      this.cardsData[this.cardsData.length - 1]
     );
+    lastCardClone.classList.add("clone");
+    this.track.appendChild(lastCardClone);
 
-    this.container.addEventListener("mouseenter", () => this.stopAutoplay());
-    this.container.addEventListener("mouseleave", () => this.startAutoplay());
-  }
+    // Cartes réelles
+    this.cardsData.forEach((card) => {
+      const cardEl = this.createCard(card);
+      this.track.appendChild(cardEl);
+    });
 
-  createPagination() {
-    this.pagination.innerHTML = "";
-    this.paginationButtons = [];
+    // Clone première carte et insérer à la fin
+    const firstCardClone = this.createCard(this.cardsData[0]);
+    firstCardClone.classList.add("clone");
+    this.track.appendChild(firstCardClone);
 
-    for (let i = 0; i < this.totalSlides; i++) {
-      const btn = document.createElement("div");
-      btn.classList.add("carousel-pagination-button");
-      if (i === 0) btn.classList.add("active");
-      this.pagination.appendChild(btn);
-      this.paginationButtons.push(btn);
-    }
+    // Met à jour la liste des cartes (après ajout clones)
+    this.cards = this.track.children;
   }
 
   updatePagination() {
-    this.paginationButtons.forEach((btn) => btn.classList.remove("active"));
-    if (this.paginationButtons[this.currentIndex]) {
-      this.paginationButtons[this.currentIndex].classList.add("active");
+    this.paginationContainer.innerHTML = "";
+    const totalPages = Math.ceil(this.cardsData.length / this.slidesPerView);
+
+    for (let i = 0; i < totalPages; i++) {
+      const dot = document.createElement("div");
+      dot.classList.add("carousel-pagination-button");
+      if (i === this.currentIndex - 1) {
+        // -1 car currentIndex commence à 1
+        dot.classList.add("active");
+      }
+      dot.addEventListener("click", () => {
+        this.goToSlide(i + 1); // +1 car index 0 = clone dernière
+        this.resetAutoplay();
+      });
+      this.paginationContainer.appendChild(dot);
     }
+  }
+
+  updateSlidePosition(animate = true) {
+    const cardWidth = this.cards[0].offsetWidth + 20; // +20 si margin-right : ajuste au besoin
+    const offset = this.currentIndex * cardWidth * this.slidesPerView;
+
+    if (animate) {
+      this.track.style.transition = "transform 0.4s ease";
+    } else {
+      this.track.style.transition = "none";
+    }
+
+    this.track.style.transform = `translateX(-${offset}px)`;
+
+    this.updatePagination();
   }
 
   goToSlide(index) {
     this.currentIndex = index;
-    this.track.style.transition = "transform 0.4s ease";
-    const offset = (index + 1) * this.cardWidth;
-    this.track.style.transform = `translateX(-${offset}px)`;
-    this.updatePagination();
+    this.updateSlidePosition();
   }
 
   nextSlide() {
-    if (this.currentIndex >= this.totalSlides - 1) {
-      this.goToSlide(this.currentIndex + 1);
-      setTimeout(() => {
-        this.track.style.transition = "none";
-        this.currentIndex = 0;
-        const offset = (this.currentIndex + 1) * this.cardWidth;
-        this.track.style.transform = `translateX(-${offset}px)`;
-        this.updatePagination();
-      }, 400);
-    } else {
-      this.goToSlide(this.currentIndex + 1);
-    }
+    this.currentIndex++;
+    this.updateSlidePosition();
   }
 
   prevSlide() {
-    if (this.currentIndex <= 0) {
-      this.goToSlide(this.currentIndex - 1);
-      setTimeout(() => {
-        this.track.style.transition = "none";
-        this.currentIndex = this.totalSlides - 1;
-        const offset = (this.currentIndex + 1) * this.cardWidth;
-        this.track.style.transform = `translateX(-${offset}px)`;
-        this.updatePagination();
-      }, 400);
-    } else {
-      this.goToSlide(this.currentIndex - 1);
+    this.currentIndex--;
+    this.updateSlidePosition();
+  }
+
+  resetAutoplay() {
+    if (!this.autoPlay) return;
+    clearInterval(this.timer);
+    this.timer = setInterval(() => this.nextSlide(), this.autoPlayDelay);
+  }
+
+  attachEvents() {
+    this.nextBtn.addEventListener("click", () => {
+      this.nextSlide();
+      this.resetAutoplay();
+    });
+
+    this.prevBtn.addEventListener("click", () => {
+      this.prevSlide();
+      this.resetAutoplay();
+    });
+
+    window.addEventListener("resize", () => {
+      this.updateSlidePosition(false); // false = sans animation pour resize
+    });
+
+    // Écoute la fin de transition pour reset la position si on est sur un clone
+    this.track.addEventListener("transitionend", () => {
+      if (this.cards[this.currentIndex].classList.contains("clone")) {
+        if (this.currentIndex === 0) {
+          // On est sur clone dernière carte -> aller à la vraie dernière
+          this.currentIndex = this.cards.length - 2;
+        } else if (this.currentIndex === this.cards.length - 1) {
+          // On est sur clone première carte -> aller à la vraie première
+          this.currentIndex = 1;
+        }
+        this.updateSlidePosition(false); // reset position sans animation
+      }
+    });
+  }
+
+  init() {
+    this.populateCards();
+    this.attachEvents();
+
+    // Positionne au début (sur la vraie première carte, index = 1)
+    this.updateSlidePosition(false);
+
+    if (this.autoPlay) {
+      this.timer = setInterval(() => this.nextSlide(), this.autoPlayDelay);
     }
-  }
-
-  startAutoplay() {
-    this.autoplayTimer = setInterval(
-      () => this.nextSlide(),
-      this.autoPlayInterval
-    );
-  }
-
-  stopAutoplay() {
-    clearInterval(this.autoplayTimer);
   }
 }
 
-// Initialisation
+// ----------------------
+// 🚀 Initialisation
+// ----------------------
 document.addEventListener("DOMContentLoaded", () => {
-  new Carousel(".carousel-container", {
-    autoplay: 5000,
+  new Carousel(".carousel-container", cardsData, {
+    autoPlayDelay: 5000,
+    slidesPerView: 1,
+    autoPlay: true,
   });
 });
