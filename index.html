@@ -12,11 +12,11 @@
     <title>CARD - SLIDE</title>
   </head>
   <body>
-    <main class="container">
+    <main class="container swiper">
       <section class="wrapper">
-        <section class="card-list">
+        <section class="card-list swiper-wrapper">
           <!-- CARD 1 -->
-          <article class="card">
+          <article class="card swiper-slide">
             <figure class="card-image">
               <img
                 src="assets/images/development.jpg"
@@ -45,7 +45,7 @@
           </article>
 
           <!-- CARD 2 -->
-          <article class="card">
+          <article class="card swiper-slide">
             <figure class="card-image">
               <img src="assets/images/design.jpg" alt="design image" />
               <figcaption class="card-tag">Design</figcaption>
@@ -71,7 +71,7 @@
           </article>
 
           <!-- CARD 3 -->
-          <article class="card">
+          <article class="card swiper-slide">
             <figure class="card-image">
               <img
                 src="assets/images/productivity.jpg"
@@ -100,7 +100,7 @@
           </article>
 
           <!-- CARD 4 -->
-          <article class="card">
+          <article class="card swiper-slide">
             <figure class="card-image">
               <img src="assets/images/ai.jpg" alt="ai image" />
               <figcaption class="card-tag">AI</figcaption>
@@ -126,7 +126,7 @@
           </article>
 
           <!-- CARD 5 -->
-          <article class="card">
+          <article class="card swiper-slide">
             <figure class="card-image">
               <img src="assets/images/animation.jpg" alt="animation image" />
               <figcaption class="card-tag">Animation</figcaption>
@@ -152,6 +152,16 @@
           </article>
         </section>
       </section>
+      <!-- If we need pagination -->
+      <div class="swiper-pagination"></div>
+
+      <!-- If we need navigation buttons -->
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </main>
+
+    <!-- Link Swiper Script -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script src="assets/js/script.js"></script>
   </body>
 </html>
